@@ -264,7 +264,7 @@
             if (totalDistance > 0) {
                 // คำนวณเปอร์เซ็นต์โบนัส
                 percentBonus = (incomeSum / totalDistance) - 10;
-                bamlaws = ((((incomeSum / totalDistance)-10))/10)*((totalDistance/2)*10);
+                bamlaws = Math.abs(((((incomeSum / totalDistance) - 10)) / 10) * ((totalDistance / 2) * 10));
                 // ถ้าเปอร์เซ็นต์โบนัสน้อยกว่า 20 ให้คำนวณโบนัสจาก 50% ของหารครึ่ง
                 if (percentBonus < 20) {
                     bonus = (percentBonus / 100) * 1.5 * bamlaws;
