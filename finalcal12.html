@@ -735,11 +735,11 @@
                     useCORS: true,
                     logging: true,
                     backgroundColor: '#2a2a2a',
-                    width: container.scrollWidth, // ใช้ความกว้างจริงของ container
+                    width: 800, // กำหนดความกว้างตายตัว
                     height: container.scrollHeight, // ใช้ความสูงจริงของ container
                     scrollY: 0,
                     scrollX: 0,
-                    windowWidth: container.scrollWidth * 2, // ตั้งค่าความกว้างของหน้าต่าง
+                    windowWidth: 800*2, // ตั้งค่าความกว้างของหน้าต่าง
                     windowHeight: container.scrollHeight, // ตั้งค่าความสูงของหน้าต่าง
                 };
 
@@ -756,18 +756,7 @@
                 alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ');
             }
         }
-        function adjustContainerForMobile() {
-            const container = document.querySelector('.saved-container');
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
 
-            if (screenWidth < 768) { // ถ้าเป็นหน้าจอโทรศัพท์
-                container.style.width = `${screenWidth}px`;
-                container.style.height = `${screenHeight}px`;
-            }
-        }
-
-adjustContainerForMobile();
     </script>
 </body>
 </html>
