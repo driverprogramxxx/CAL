@@ -338,7 +338,7 @@
 
 
         .calculation-box h2 {
-            font-size: 40px !important; /* ปรับขนาดฟอนต์ให้พอดี */
+            font-size: 20px !important; /* ปรับขนาดฟอนต์ให้พอดี */
             margin: 10px 0 !important;
         }
 
@@ -680,7 +680,7 @@
                 calcBox.className = 'calculation-box';
 
                 // ปรับขนาดฟอนต์ใน calculation box
-                calcBox.style.fontSize = '2em'; // เพิ่มขนาดฟอนต์สองเท่า
+                calcBox.style.fontSize = '1em'; // เพิ่มขนาดฟอนต์สองเท่า
                 calcBox.querySelector('#calculationDetails').style.fontSize = '0.75em'; // ปรับขนาดฟอนต์รายละเอียด
                 calcBox.querySelector('#totalSum').style.fontSize = '2em'; // ปรับขนาดฟอนต์รวมยอด
                 calcBox.querySelector('#distanceUsed').style.fontSize = '2em'; // ปรับขนาดฟอนต์ระยะทาง
@@ -735,11 +735,11 @@
                     useCORS: true,
                     logging: true,
                     backgroundColor: '#2a2a2a',
-                    width: 800, // กำหนดความกว้างตายตัว
-                    height: container.scrollHeight*1.5, // ใช้ความสูงจริงของ container
+                    width: 400, // กำหนดความกว้างตายตัว
+                    height: container.scrollHeight*0.75, // ใช้ความสูงจริงของ container
                     scrollY: 0,
                     scrollX: 0,
-                    windowWidth: 800*2, // ตั้งค่าความกว้างของหน้าต่าง
+                    windowWidth: 400*2, // ตั้งค่าความกว้างของหน้าต่าง
                     windowHeight: container.scrollHeight, // ตั้งค่าความสูงของหน้าต่าง
                 };
 
