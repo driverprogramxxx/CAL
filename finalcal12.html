@@ -244,7 +244,7 @@
         <div id="imageOutput">
             <h3>สรุปผล</h3>
             <canvas id="canvasOutput" width="400" height="300"></canvas>
-            <button type="button" id="copyButton" onclick="copyImageToClipboard()">คัดลอกรูปสรุปผล</button>
+            <button type="button" id="copyButton" onclick="saveImage()">บันทึกรูปภาพ</button>
         </div>
     </form>
 
@@ -463,16 +463,13 @@
             });
         }
         // ฟังก์ชันคัดลอกรูปภาพไปยังคลิปบอร์ด
-        function copyImageToClipboard() {
+        function saveImage() {
             const canvas = document.getElementById('canvasOutput');
-            canvas.toBlob((blob) => {
-                const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => {
-                    alert("คัดลอกรูปภาพไปยังคลิปบอร์ดเรียบร้อยแล้ว!");
-                }).catch((err) => {
-                    console.error("ไม่สามารถคัดลอกรูปภาพได้: ", err);
-                });
-            });
+            const dataURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `สรุปผล-${lastSelectedDate}.png`;
+            link.href = dataURL;
+            link.click();
         }
         setInterval(function() {
             const now = new Date();
@@ -482,7 +479,13 @@
         // เพิ่มการอัปเดตวันที่เริ่มต้น
         window.onload = function() {
             const dateInput = document.getElementById('selectedDate');
-            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            
+            // แก้ไขเวลาตาม timezone ให้ถูกต้อง
+            const timezoneOffset = now.getTimezoneOffset() * 60000; // แปลงเป็นมิลลิวินาที
+            const localDate = new Date(now - timezoneOffset);
+            
+            const today = localDate.toISOString().split('T')[0];
             dateInput.value = today;
             lastSelectedDate = today;
         };
