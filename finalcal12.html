@@ -134,11 +134,25 @@
             max-width: 380px;
             height: auto; /* ปรับความสูงอัตโนมัติ */
         }
+        #copyButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #copyButton:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <form id="sumForm">
         <div id="dateSelector">
+            <h2>***เปิดใน GOOGLE CHROME***</h2>
             <label for="selectedDate">ยอดวันที่:</label>
             <input type="date" id="selectedDate" onchange="updateDate()">
         </div>
@@ -230,6 +244,7 @@
         <div id="imageOutput">
             <h3>สรุปผล</h3>
             <canvas id="canvasOutput" width="400" height="300"></canvas>
+            <button type="button" id="copyButton" onclick="copyImageToClipboard()">คัดลอกรูปสรุปผล</button>
         </div>
     </form>
 
