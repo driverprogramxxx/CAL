@@ -129,10 +129,23 @@
         #canvasOutput {
             border: 2px solid #4CAF50; /* เส้นขอบสีเขียว */
             border-radius: 10px; /* มุมโค้ง */
-            background-color: #333333; /* พื้นหลังสีเทา */
+            background-color: #f0f0f0; /* พื้นหลังสีขาวเทา */
             width: 100%;
-            max-width: 1600px;
+            max-width: 400px;
             height: auto; /* ปรับความสูงอัตโนมัติ */
+        }
+        #copyButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #copyButton:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -228,7 +241,9 @@
 
         <!-- แสดงผลรูปภาพสรุปผล -->
         <div id="imageOutput">
+            <h3>สรุปผล</h3>
             <canvas id="canvasOutput" width="400" height="300"></canvas>
+            <button type="button" id="copyButton" onclick="copyImageToClipboard()">คัดลอกรูปสรุปผล</button>
         </div>
     </form>
 
@@ -353,70 +368,111 @@
         function generateImage() {
             const canvas = document.getElementById('canvasOutput');
             const ctx = canvas.getContext('2d');
-            const calculationBox = document.getElementById('calculationBox');
 
-            // ล้าง Canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ตั้งค่า Scale Factor เพื่อเพิ่มความคมชัด
+            const scaleFactor = 2;
+            const baseWidth = 400; // ความกว้างฐานของ Canvas (ไม่รวม Scale)
+            const baseHeight = 300; // ความสูงฐานขั้นต่ำ
 
-            // ตั้งค่าพื้นหลังเป็นสีเทา
-            ctx.fillStyle = '#333333'; // สีเทาเข้ม
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // คำนวณขอบ 10%
+            const leftPadding = baseWidth * 0.1; // ขอบซ้าย 10% ของความกว้าง
+            let topPadding; // ขอบบน 10% ของความสูง (จะคำนวณทีหลัง)
 
-            // ตั้งค่าเส้นขอบ
-            ctx.strokeStyle = '#4CAF50'; // สีเขียว
-            ctx.lineWidth = 2;
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-            // ดึงข้อมูล
+            // ดึงข้อมูลจาก UI
             const details = document.getElementById('calculationDetails').textContent;
             const totalSum = document.getElementById('totalSum').textContent;
             const distanceUsed = document.getElementById('distanceUsed').textContent;
             const ratePerKm = document.getElementById('ratePerKm').textContent;
 
-            // แยกส่วนข้อมูล
+            // แยกข้อมูลเป็นบรรทัด
             const detailsLines = details.split('\n').filter(line => line.trim() !== '');
             const summaryLines = [totalSum, distanceUsed, ratePerKm];
 
-            // คำนวณความสูงของ Canvas
-            const lineHeight = 15; // ความสูงของแต่ละบรรทัดในรายละเอียด
-            const summaryLineHeight = 30; // ความสูงของแต่ละบรรทัดในส่วนสรุป
-            const padding = 30; // ระยะห่างด้านบนและด้านล่าง
-            const dateSectionHeight = 30; // ความสูงส่วนวันที่
+            // ตั้งค่าขนาดตัวอักษรและระยะห่าง
+            const dateFont = '24px Arial';
+            const detailsFont = '12px Arial';
+            const summaryFont = '24px Arial';
+            const lineHeight = 30; // ระยะห่างระหว่างบรรทัดในรายละเอียด
+            const summaryLineHeight = 40; // ระยะห่างระหว่างบรรทัดสรุป
+            const sectionGap = 30; // ระยะห่างระหว่างส่วน
 
-            // คำนวณความสูงทั้งหมด
-            let totalHeight = (detailsLines.length * lineHeight) + 
-                            (summaryLines.length * summaryLineHeight) + 
-                            padding + 
-                            dateSectionHeight + 50;
+            // 1. คำนวณความสูงของเนื้อหา
+            let contentHeight = 0;
+            
+            // ส่วนวันที่ (ใช้ฟอนต์ 28px)
+            ctx.font = dateFont;
+            contentHeight += 35; // ความสูงของส่วนวันที่
+            
+            // ส่วนรายละเอียด (ใช้ฟอนต์ 24px)
+            ctx.font = detailsFont;
+            contentHeight += detailsLines.length * lineHeight;
+            
+            // ระยะห่างก่อนส่วนสรุป
+            contentHeight += sectionGap;
+            
+            // ส่วนสรุป (ใช้ฟอนต์ 48px)
+            ctx.font = summaryFont;
+            contentHeight += summaryLines.length * summaryLineHeight;
 
-            // ปรับขนาด Canvas
-            canvas.height = totalHeight;
+            // 2. คำนวณความสูงรวม (รวม 10% ขอบบน)
+            // สูตร: totalHeight = contentHeight / 0.9
+            let totalHeight = Math.max(contentHeight / 0.9, baseHeight); // ไม่ต่ำกว่า 300px
+            
+            // 3. ตั้งค่าขนาด Canvas
+            canvas.width = baseWidth * scaleFactor;
+            canvas.height = totalHeight * scaleFactor;
+            canvas.style.width = `${baseWidth}px`;
+            canvas.style.height = `${totalHeight}px`;
+            ctx.scale(scaleFactor, scaleFactor);
 
-            // วาดวันที่ที่ด้านบน
-            if (lastSelectedDate) {
-                ctx.fillStyle = '#FFD700'; // สีทอง
-                ctx.font = '14px Arial';
-                ctx.fillText(`ยอดวันที่: ${lastSelectedDate}`, 10, 25); // ตำแหน่ง y = 25
-            }
+            // 4. คำนวณขอบบนใหม่จาก totalHeight
+            topPadding = totalHeight * 0.1; // 10% ของความสูงรวม
+
+            // ล้าง Canvas และตั้งค่าพื้นหลัง
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, baseWidth, totalHeight);
+
+            // วาดเส้นขอบ
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, baseWidth, totalHeight);
+
+            // วาดวันที่
+            ctx.fillStyle = '#0a7e07';
+            ctx.font = dateFont;
+            ctx.fillText(`ยอดวันที่: ${lastSelectedDate}`, leftPadding, topPadding);
 
             // วาดรายละเอียด
-            ctx.fillStyle = '#ffffff'; // สีขาว
-            ctx.font = '12px Arial';
-            let y = dateSectionHeight + 30; // เริ่มวาดรายละเอียดใต้ส่วนวันที่
+            ctx.fillStyle = '#000000';
+            ctx.font = detailsFont;
+            let y = topPadding + 35; // เริ่มจากใต้ส่วนวันที่
             detailsLines.forEach((line) => {
-                ctx.fillText(line, 10, y);
+                ctx.fillText(line, leftPadding, y);
                 y += lineHeight;
             });
 
             // วาดส่วนสรุป
-            y += 30; // เพิ่มระยะห่างก่อนส่วนสรุป
-            ctx.font = '24px Arial';
+            ctx.fillStyle = '#0a7e07';
+            y += sectionGap;
+            ctx.font = summaryFont;
             summaryLines.forEach((line) => {
-                ctx.fillText(line, 10, y);
+                ctx.fillText(line, leftPadding, y);
                 y += summaryLineHeight;
             });
         }
-
+        // ฟังก์ชันคัดลอกรูปภาพไปยังคลิปบอร์ด
+        function copyImageToClipboard() {
+            const canvas = document.getElementById('canvasOutput');
+            canvas.toBlob((blob) => {
+                const item = new ClipboardItem({ "image/png": blob });
+                navigator.clipboard.write([item]).then(() => {
+                    alert("คัดลอกรูปภาพไปยังคลิปบอร์ดเรียบร้อยแล้ว!");
+                }).catch((err) => {
+                    console.error("ไม่สามารถคัดลอกรูปภาพได้: ", err);
+                });
+            });
+        }
         setInterval(function() {
             const now = new Date();
             const dateTimeStr = `${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH')}`;
@@ -431,4 +487,4 @@
         };
     </script>
 </body>
-</html>
+</html> 
