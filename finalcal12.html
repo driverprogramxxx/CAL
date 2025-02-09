@@ -134,19 +134,6 @@
             max-width: 400px;
             height: auto; /* ปรับความสูงอัตโนมัติ */
         }
-        #copyButton {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-        }
-        #copyButton:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
@@ -243,7 +230,6 @@
         <div id="imageOutput">
             <h3>สรุปผล</h3>
             <canvas id="canvasOutput" width="400" height="300"></canvas>
-            <button type="button" id="copyButton" onclick="copyImageToClipboard()">คัดลอกรูปสรุปผล</button>
         </div>
     </form>
 
@@ -392,9 +378,9 @@
             const dateFont = '24px Arial';
             const detailsFont = '12px Arial';
             const summaryFont = '24px Arial';
-            const lineHeight = 30; // ระยะห่างระหว่างบรรทัดในรายละเอียด
-            const summaryLineHeight = 40; // ระยะห่างระหว่างบรรทัดสรุป
-            const sectionGap = 30; // ระยะห่างระหว่างส่วน
+            const lineHeight = 20; // ระยะห่างระหว่างบรรทัดในรายละเอียด
+            const summaryLineHeight = 30; // ระยะห่างระหว่างบรรทัดสรุป
+            const sectionGap = 20; // ระยะห่างระหว่างส่วน
 
             // 1. คำนวณความสูงของเนื้อหา
             let contentHeight = 0;
