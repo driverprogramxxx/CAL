@@ -264,6 +264,16 @@
             generateImage();
             document.getElementById('imageOutput').style.display = 'block';
             isCalculated = true;
+            
+            // อัปเดตเวลาแบบเรียลไทม์ทุก 1 วินาที
+            if (window.updateInterval) {
+                clearInterval(window.updateInterval);
+            }
+            window.updateInterval = setInterval(() => {
+                if (isCalculated) {
+                    generateImage();
+                }
+            }, 1000);
         }
 
         function calculateSum() {
@@ -359,6 +369,9 @@
             document.getElementById('calculationBox').style.display = 'none';
             document.getElementById('imageOutput').style.display = 'none';
             isCalculated = false;
+            if (window.updateInterval) {
+                clearInterval(window.updateInterval);
+            }
         }
 
         function confirmReset() {
@@ -400,7 +413,7 @@
             const sectionGap = 20; // ระยะห่างระหว่างส่วน
 
             // 1. คำนวณความสูงของเนื้อหา
-            let contentHeight = 0;
+            let contentHeight = 30;
             
             // ส่วนวันที่ (ใช้ฟอนต์ 28px)
             ctx.font = dateFont;
@@ -463,6 +476,29 @@
                 ctx.fillText(line, leftPadding, y);
                 y += summaryLineHeight;
             });
+            const now = new Date();
+            const thaiDate = now.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            const thaiTime = now.toLocaleTimeString('th-TH');
+            const dateTimeText = `อัปเดตล่าสุด: ${thaiDate} ${thaiTime} น.`;
+
+            // เพิ่มความสูงส่วนวันที่และเวลา
+            const dateTimeFont = '14px Arial';
+            ctx.font = dateTimeFont;
+            contentHeight += 30; // เพิ่มความสูงสำหรับบรรทัดวันที่
+
+            // ... โค้ดเดิมที่คำนวณความสูง ...
+
+            // วาดวันที่และเวลาด้านล่าง
+            ctx.fillStyle = '#666666';
+            ctx.font = dateTimeFont;
+            ctx.textAlign = 'right';
+            ctx.fillText(dateTimeText, baseWidth - leftPadding, totalHeight - 20);
+            ctx.textAlign = 'left'; // รีเซ็ตการจัดตำแหน่ง
         }
         // ฟังก์ชันคัดลอกรูปภาพไปยังคลิปบอร์ด
         function saveImage() {
