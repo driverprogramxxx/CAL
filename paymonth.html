@@ -193,6 +193,10 @@
                 <label for="electricity">ค่าไฟ:</label>
                 <input type="number" id="electricity" name="ELECTRICITY" placeholder="กรอกจำนวนเงิน" oninput="resetCalculation()">
             </div>
+            <div class="input-group">
+                <label for="otherExpenses">รายจ่ายอื่นๆ:</label>
+                <input type="number" id="otherExpenses" name="OTHER_EXPENSES" placeholder="กรอกจำนวนเงิน" oninput="resetCalculation()">
+            </div>
         </div>
 
         <div class="section">
@@ -284,28 +288,30 @@
             let lineman = parseFloat(document.getElementById('lineman').value) || 0;
             let others = parseFloat(document.getElementById('others').value) || 0;
             let electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            let otherExpenses = parseFloat(document.getElementById('otherExpenses').value) || 0;
 
             let incomeSum = grab + bolt + indriver + maxim + others + lineman;
-            let maintenanceFee = incomeSum * 0.1;
-            let remainingIncome = incomeSum - maintenanceFee;
-            let remainingAfterExpenses = remainingIncome - electricity;
-            let half = remainingAfterExpenses / 2;
-            let totalToTransfer = half + maintenanceFee;
+            let totalExpenses = electricity + otherExpenses;
+            let netIncome = incomeSum - totalExpenses;
+            let bonus = netIncome * 0.1;
+            let totalToTransfer = netIncome * 0.9;
 
+             // ส่วนแสดงผลการคำนวณ
             let calculationText = '';
-
             if (grab > 0) calculationText += `GRAB: ${grab} บาท\n`;
             if (bolt > 0) calculationText += `BOLT: ${bolt} บาท\n`;
             if (indriver > 0) calculationText += `INDRIVER: ${indriver} บาท\n`;
             if (maxim > 0) calculationText += `MAXIM: ${maxim} บาท\n`;
             if (lineman > 0) calculationText += `LINEMAN: ${lineman} บาท\n`;
             if (others > 0) calculationText += `งานนอก: ${others} บาท\n`;
+            
             calculationText += `รวมยอดรายรับ = ${incomeSum.toFixed(2)} บาท\n`;
-            calculationText += `maintenance (10%) = ${maintenanceFee.toFixed(2)} บาท\n`;
             calculationText += `ค่าไฟ: ${electricity} บาท\n`;
-            calculationText += `รวมรายจ่าย = ${maintenanceFee.toFixed(2)} + ${electricity} = ${(maintenanceFee + electricity).toFixed(2)} บาท\n`;
-            calculationText += `หารครึ่ง = (${incomeSum.toFixed(2)} - ${(maintenanceFee + electricity).toFixed(2)}) / 2 = ${half.toFixed(2)} บาท\n`;
-            calculationText += `หารครึ่ง+บำรุง 10% = ${half.toFixed(2)} + ${maintenanceFee.toFixed(2)} = ${totalToTransfer.toFixed(2)} บาท\n`;
+            calculationText += `รายจ่ายอื่นๆ: ${otherExpenses} บาท\n`;
+            calculationText += `รวมรายจ่าย = ${electricity} + ${otherExpenses} = ${totalExpenses.toFixed(2)} บาท\n`;
+            calculationText += `รายได้ = ${incomeSum.toFixed(2)} - ${totalExpenses.toFixed(2)} = ${netIncome.toFixed(2)} บาท\n`;
+            calculationText += `โบนัส 10% = ${netIncome.toFixed(2)} * 0.1 = ${bonus.toFixed(2)} บาท\n`;
+            calculationText += `รวมยอดที่ต้องโอน = ${netIncome.toFixed(2)} * 0.9 = ${totalToTransfer.toFixed(2)} บาท\n`;
 
             let startday1 = parseFloat(document.getElementById('startday1').value) || 0;
             let endday1 = parseFloat(document.getElementById('endday1').value) || 0;
@@ -326,39 +332,6 @@
             if (startnight2 > 0) calculationText += `เริ่มงานกะกลางคืน : ${startnight2} KM\n`;
             if (endnight2 > 0) calculationText += `24.00 กะกลางคืน : ${endnight2} KM\n`;
             
-            let percentBonus = 0;
-            let bonus = 0;
-            let bamlaws = 0;
-
-            if (totalDistance > 0) {
-                percentBonus = (incomeSum / totalDistance) - 10;
-                bamlaws = Math.abs(((((incomeSum / totalDistance) - 10)) / 10) * ((totalDistance / 2) * 10));
-                if (percentBonus < 20) {
-                    bonus = (percentBonus / 100) * 1.5 * bamlaws;
-                    calculationText += `โบนัสรถใหญ่: ${bonus.toFixed(2)} บาท\n`;
-                } else {
-                    bonus = (20 / 100) * 1.5 * bamlaws;
-                    calculationText += `โบนัสรถใหญ่: ${bonus.toFixed(2)} บาท\n`;
-                }
-            } else {
-                calculationText += `โบนัสรถใหญ่: คำนวณไม่ได้เนื่องจากระยะทางรวมเป็นศูนย์\n`;
-            }
-
-            let percentBonusSM = 0;
-            let bonusSM = 0;
-
-            if (totalDistance > 0) {
-                percentBonusSM = (incomeSum / totalDistance) - 10 ;
-                if (percentBonusSM < 10 ) {
-                    bonusSM = (percentBonusSM / 100)* 3 * bamlaws;
-                    calculationText += `โบนัสรถเล็ก: ${bonusSM.toFixed(2)} บาท\n`;
-                } else {
-                    bonusSM = (10 / 100)* 3 * bamlaws;
-                    calculationText += `โบนัสรถเล็ก: ${bonusSM.toFixed(2)} บาท\n`;
-                }
-            } else {
-                calculationText += `โบนัสรถเล็ก: คำนวณไม่ได้เนื่องจากระยะทางรวมเป็นศูนย์\n`;
-            }
             let ratePerKm = (incomeSum / totalDistance).toFixed(2) || 0;
             document.getElementById('calculationDetails').textContent = calculationText;
             document.getElementById('totalSum').textContent = `รวมยอดที่ต้องโอน: ${totalToTransfer.toFixed(2)} บาท`;
