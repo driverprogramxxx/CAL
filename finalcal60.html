@@ -368,7 +368,7 @@
             }
             let ratePerKm = (incomeSum / totalDistance).toFixed(2) || 0;
             document.getElementById('calculationDetails').textContent = calculationText;
-            document.getElementById('totalSum').textContent = `รวมยอดที่ต้องโอน: ${totalToTransfer.toFixed(2) - otherExpenses/2} บาท`;
+            document.getElementById('totalSum').textContent = `รวมยอดที่ต้องโอน: ${totalToTransfer.toFixed(2) - otherExpenses*0.6} บาท`;
             document.getElementById('distanceUsed').textContent = `ระยะทางที่ใช้: ${totalDistance} กม.`;
             document.getElementById('ratePerKm').textContent = `บาทต่อกิโลเมตร: ${ratePerKm} บาท/กม.`;
         }
